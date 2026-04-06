@@ -211,20 +211,17 @@
     }
 
     function sendFlower() {
-        if (!selectedFlower) return;
-        const message = document.getElementById('messageInput').value.trim();
-        if (!message) {
-            alert('Please write a message first 💬');
-            return;
-        }
-        const sender = tg.initDataUnsafe?.user?.first_name || 'Someone';
-        const msgFormatted = message.replace(/ /g, '-');
-        const link = `https://t.me/flower_gift_bot?start=gift_${selectedFlower.key}_${sender}_${msgFormatted}`;
-        tg.close();
-        setTimeout(() => {
-            window.open(link, '_blank');
-        }, 300);
+    if (!selectedFlower) return;
+    const message = document.getElementById('messageInput').value.trim();
+    if (!message) {
+        alert('Please write a message first 💬');
+        return;
     }
+    const sender = tg.initDataUnsafe?.user?.first_name || 'Someone';
+    const msgFormatted = message.replace(/ /g, '-');
+    const link = `https://t.me/flower_gift_bot?start=gift_${selectedFlower.key}_${sender}_${msgFormatted}`;
+    tg.openTelegramLink(link);
+}
 </script>
 </body>
 </html>
