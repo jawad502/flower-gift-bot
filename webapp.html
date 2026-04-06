@@ -217,10 +217,13 @@
             alert('Please write a message first 💬');
             return;
         }
-        tg.sendData(JSON.stringify({
-            flower: selectedFlower.key,
-            message: message
-        }));
+        const sender = tg.initDataUnsafe?.user?.first_name || 'Someone';
+        const msgFormatted = message.replace(/ /g, '-');
+        const link = `https://t.me/flower_gift_bot?start=gift_${selectedFlower.key}_${sender}_${msgFormatted}`;
+        tg.close();
+        setTimeout(() => {
+            window.open(link, '_blank');
+        }, 300);
     }
 </script>
 </body>
