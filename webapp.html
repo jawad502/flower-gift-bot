@@ -6,52 +6,92 @@
     <title>Flower Gift</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-gradient-start: #1a0a2e;
+            --bg-gradient-mid: #2d1b4e;
+            --primary-pink: #ff9de2;
+            --primary-orange: #ffb347;
+            --text-white: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --input-bg: rgba(255, 255, 255, 0.07);
+            --input-border: rgba(255, 255, 255, 0.15);
+            --shadow-glow: rgba(255, 157, 226, 0.3);
+            --border-radius-lg: 20px;
+            --border-radius-md: 16px;
+            --border-radius-sm: 14px;
+            --spacing-xs: 6px;
+            --spacing-sm: 10px;
+            --spacing-md: 14px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            --transition-fast: 0.2s ease;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1a0a2e, #2d1b4e, #1a0a2e);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-mid), var(--bg-gradient-start));
             min-height: 100vh;
-            color: white;
+            color: var(--text-white);
             overflow-x: hidden;
         }
 
+        /* Header */
         .header {
             text-align: center;
-            padding: 30px 20px 10px;
+            padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-sm);
         }
 
         .header h1 {
             font-size: 26px;
             font-weight: 700;
-            background: linear-gradient(90deg, #ff9de2, #ffb347, #ff9de2);
+            background: linear-gradient(90deg, var(--primary-pink), var(--primary-orange), var(--primary-pink));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 6px;
+            background-clip: text;
+            margin-bottom: var(--spacing-xs);
         }
 
         .header p {
-            color: rgba(255,255,255,0.6);
+            color: var(--text-muted);
             font-size: 13px;
         }
 
+        /* Flower Grid */
         .flowers-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            padding: 20px;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-lg);
         }
 
         .flower-card {
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 20px;
-            padding: 22px 14px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 22px var(--spacing-md);
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all var(--transition-fast);
             position: relative;
             overflow: hidden;
+        }
+
+        .flower-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .flower-card:focus {
+            outline: 2px solid var(--primary-pink);
+            outline-offset: 2px;
         }
 
         .flower-card:active {
@@ -59,16 +99,16 @@
         }
 
         .flower-card.selected {
-            border-color: #ff9de2;
+            border-color: var(--primary-pink);
             background: rgba(255, 157, 226, 0.15);
-            box-shadow: 0 0 20px rgba(255, 157, 226, 0.3);
+            box-shadow: 0 0 20px var(--shadow-glow);
         }
 
         .flower-emoji {
             font-size: 52px;
             display: block;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            margin-bottom: var(--spacing-sm);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
         }
 
         .flower-name {
@@ -79,149 +119,321 @@
 
         .flower-meaning {
             font-size: 11px;
-            color: rgba(255,255,255,0.5);
+            color: var(--text-dim);
         }
 
+        .checkmark {
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .flower-card.selected .checkmark {
+            opacity: 1;
+        }
+
+        /* Message Section */
         .message-section {
-            padding: 0 20px 20px;
+            padding: 0 var(--spacing-lg) var(--spacing-lg);
             display: none;
         }
 
         .message-section.visible {
             display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .message-section label {
             display: block;
             font-size: 13px;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 8px;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-sm);
         }
 
         .message-section textarea {
             width: 100%;
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 14px;
-            padding: 14px;
-            color: white;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: var(--border-radius-sm);
+            padding: var(--spacing-md);
+            color: var(--text-white);
             font-size: 14px;
             resize: none;
             height: 90px;
             outline: none;
             font-family: inherit;
+            transition: border-color var(--transition-fast);
+        }
+
+        .message-section textarea:focus {
+            border-color: var(--primary-pink);
         }
 
         .message-section textarea::placeholder {
-            color: rgba(255,255,255,0.3);
+            color: var(--text-dim);
         }
 
+        /* Send Button */
         .send-btn {
             width: 100%;
-            margin-top: 14px;
+            margin-top: var(--spacing-lg);
             padding: 16px;
-            background: linear-gradient(135deg, #ff9de2, #ffb347);
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-orange));
             border: none;
-            border-radius: 16px;
+            border-radius: var(--border-radius-md);
             font-size: 16px;
             font-weight: 700;
-            color: #1a0a2e;
+            color: var(--bg-gradient-start);
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: opacity var(--transition-fast), transform var(--transition-fast);
         }
 
-        .send-btn:active { opacity: 0.85; }
+        .send-btn:hover {
+            opacity: 0.95;
+        }
 
+        .send-btn:active {
+            opacity: 0.85;
+            transform: scale(0.98);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Animations */
         .floating {
             animation: float 3s ease-in-out infinite;
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
+            0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-6px); }
         }
 
-        .checkmark {
+        /* Utility */
+        .sr-only {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 16px;
-            display: none;
-        }
-
-        .flower-card.selected .checkmark {
-            display: block;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
         }
     </style>
 </head>
 <body>
 
-<div class="header">
+<header class="header">
     <h1>🌸 Flower Gift</h1>
     <p>Pick a flower and send it to someone special</p>
-</div>
+</header>
 
-<div class="flowers-grid" id="flowersGrid"></div>
+<main>
+    <div class="flowers-grid" id="flowersGrid" role="listbox" aria-label="Select a flower"></div>
 
-<div class="message-section" id="messageSection">
-    <label>💬 Write a message with your flower</label>
-    <textarea id="messageInput" placeholder="Write something sweet..."></textarea>
-    <button class="send-btn" onclick="sendFlower()">Send Flower 💝</button>
-</div>
+    <section class="message-section" id="messageSection" aria-live="polite">
+        <label for="messageInput">💬 Write a message with your flower</label>
+        <textarea 
+            id="messageInput" 
+            placeholder="Write something sweet..." 
+            maxlength="200"
+            aria-label="Your message"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendFlower()" disabled>
+            Send Flower 💝
+        </button>
+    </section>
+</main>
 
 <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+    (function() {
+        'use strict';
 
-    const FLOWERS = [
-        { key: "rose", emoji: "🌹", name: "Rose", meaning: "Love & passion" },
-        { key: "sunflower", emoji: "🌻", name: "Sunflower", meaning: "Happiness & friendship" },
-        { key: "tulip", emoji: "🌷", name: "Tulip", meaning: "Care & warmth" },
-        { key: "jasmine", emoji: "🌸", name: "Jasmine", meaning: "Grace & elegance" },
-        { key: "lotus", emoji: "🪷", name: "Lotus", meaning: "Spiritual love" },
-        { key: "bouquet", emoji: "💐", name: "Bouquet", meaning: "Celebration & joy" },
-        { key: "daisy", emoji: "🌼", name: "Daisy", meaning: "Innocence & hope" },
-        { key: "cherry", emoji: "🌺", name: "Cherry Blossom", meaning: "Beauty & renewal" },
-    ];
+        // Configuration
+        const FLOWERS = [
+            { key: 'rose', emoji: '🌹', name: 'Rose', meaning: 'Love & passion' },
+            { key: 'sunflower', emoji: '🌻', name: 'Sunflower', meaning: 'Happiness & friendship' },
+            { key: 'tulip', emoji: '🌷', name: 'Tulip', meaning: 'Care & warmth' },
+            { key: 'jasmine', emoji: '🌸', name: 'Jasmine', meaning: 'Grace & elegance' },
+            { key: 'lotus', emoji: '🪷', name: 'Lotus', meaning: 'Spiritual love' },
+            { key: 'bouquet', emoji: '💐', name: 'Bouquet', meaning: 'Celebration & joy' },
+            { key: 'daisy', emoji: '🌼', name: 'Daisy', meaning: 'Innocence & hope' },
+            { key: 'cherry', emoji: '🌺', name: 'Cherry Blossom', meaning: 'Beauty & renewal' },
+        ];
 
-    let selectedFlower = null;
+        const MESSAGE_MAX_LENGTH = 200;
+        const TELEGRAM_BOT_USERNAME = 'flower_gift_bot';
 
-    const grid = document.getElementById('flowersGrid');
+        // State
+        let selectedFlower = null;
 
-    FLOWERS.forEach(flower => {
-        const card = document.createElement('div');
-        card.className = 'flower-card';
-        card.id = `card-${flower.key}`;
-        card.innerHTML = `
-            <span class="checkmark">✅</span>
-            <span class="flower-emoji floating">${flower.emoji}</span>
-            <div class="flower-name">${flower.name}</div>
-            <div class="flower-meaning">${flower.meaning}</div>
-        `;
-        card.onclick = () => selectFlower(flower, card);
-        grid.appendChild(card);
-    });
+        // DOM Elements
+        const elements = {
+            flowersGrid: document.getElementById('flowersGrid'),
+            messageSection: document.getElementById('messageSection'),
+            messageInput: document.getElementById('messageInput'),
+            sendBtn: document.getElementById('sendBtn'),
+        };
 
-    function selectFlower(flower, card) {
-        document.querySelectorAll('.flower-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        selectedFlower = flower;
-        document.getElementById('messageSection').classList.add('visible');
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+        // Telegram WebApp initialization
+        function initTelegram() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.expand();
+                tg.ready();
+                return tg;
+            }
+            return null;
+        }
 
-    function sendFlower() {
-    if (!selectedFlower) return;
-    const message = document.getElementById('messageInput').value.trim();
-    if (!message) {
-        alert('Please write a message first 💬');
-        return;
-    }
-    const sender = tg.initDataUnsafe?.user?.first_name || 'Someone';
-    const msgFormatted = message.replace(/ /g, '-');
-    const link = `https://t.me/flower_gift_bot?start=gift_${selectedFlower.key}_${sender}_${msgFormatted}`;
-    tg.openTelegramLink(link);
-}
+        // Create flower card element
+        function createFlowerCard(flower) {
+            const card = document.createElement('div');
+            card.className = 'flower-card';
+            card.id = `card-${flower.key}`;
+            card.setAttribute('role', 'option');
+            card.setAttribute('aria-label', `${flower.name} - ${flower.meaning}`);
+            card.setAttribute('tabindex', '0');
+            
+            card.innerHTML = `
+                <span class="checkmark" aria-hidden="true">✅</span>
+                <span class="flower-emoji floating" aria-hidden="true">${flower.emoji}</span>
+                <div class="flower-name">${flower.name}</div>
+                <div class="flower-meaning">${flower.meaning}</div>
+            `;
+
+            // Click handler
+            card.addEventListener('click', () => selectFlower(flower));
+            
+            // Keyboard handler
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    selectFlower(flower);
+                }
+            });
+
+            return card;
+        }
+
+        // Render all flower cards
+        function renderFlowers() {
+            const fragment = document.createDocumentFragment();
+            FLOWERS.forEach(flower => {
+                fragment.appendChild(createFlowerCard(flower));
+            });
+            elements.flowersGrid.appendChild(fragment);
+        }
+
+        // Select a flower
+        function selectFlower(flower) {
+            // Deselect all cards
+            document.querySelectorAll('.flower-card').forEach(card => {
+                card.classList.remove('selected');
+                card.setAttribute('aria-selected', 'false');
+            });
+
+            // Select the chosen card
+            const selectedCard = document.getElementById(`card-${flower.key}`);
+            selectedCard.classList.add('selected');
+            selectedCard.setAttribute('aria-selected', 'true');
+
+            selectedFlower = flower;
+            elements.messageSection.classList.add('visible');
+            
+            // Focus on message input
+            setTimeout(() => elements.messageInput.focus(), 100);
+            
+            // Scroll into view smoothly
+            selectedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // Enable send button if message exists
+            updateSendButtonState();
+        }
+
+        // Update send button state
+        function updateSendButtonState() {
+            const message = elements.messageInput.value.trim();
+            elements.sendBtn.disabled = !selectedFlower || !message;
+        }
+
+        // Validate message
+        function validateMessage(message) {
+            if (!message || message.trim().length === 0) {
+                return { valid: false, error: 'Please write a message first 💬' };
+            }
+            if (message.length > MESSAGE_MAX_LENGTH) {
+                return { 
+                    valid: false, 
+                    error: `Message is too long. Maximum ${MESSAGE_MAX_LENGTH} characters allowed.` 
+                };
+            }
+            return { valid: true };
+        }
+
+        // Generate gift link
+        function generateGiftLink(flower, sender, message) {
+            const msgFormatted = message.replace(/[^a-zA-Z0-9]/g, '-');
+            return `https://t.me/${TELEGRAM_BOT_USERNAME}?start=gift_${flower.key}_${sender}_${msgFormatted}`;
+        }
+
+        // Send flower handler
+        function sendFlower() {
+            if (!selectedFlower) {
+                console.error('No flower selected');
+                return;
+            }
+
+            const message = elements.messageInput.value.trim();
+            const validation = validateMessage(message);
+
+            if (!validation.valid) {
+                alert(validation.error);
+                return;
+            }
+
+            const tg = initTelegram();
+            const sender = tg?.initDataUnsafe?.user?.first_name || 'Someone';
+            const link = generateGiftLink(selectedFlower, sender, message);
+
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(link);
+            } else {
+                // Fallback for non-Telegram environments
+                window.open(link, '_blank');
+            }
+        }
+
+        // Initialize app
+        function init() {
+            initTelegram();
+            renderFlowers();
+            
+            // Message input handler
+            elements.messageInput.addEventListener('input', updateSendButtonState);
+            
+            // Prevent form submission
+            elements.sendBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                sendFlower();
+            });
+        }
+
+        // Start the app
+        init();
+    })();
 </script>
 </body>
 </html>
