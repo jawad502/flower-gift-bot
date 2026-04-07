@@ -82,11 +82,17 @@
             cursor: pointer;
             transition: all var(--transition-fast);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            perspective: 800px;
+            transform-style: preserve-3d;
         }
 
         .flower-card:hover {
             background: rgba(255, 255, 255, 0.1);
+        }
+
+        .flower-card:hover .flower-emoji {
+            transform: rotateY(180deg) scale(1.1);
         }
 
         .flower-card:focus {
@@ -101,14 +107,48 @@
         .flower-card.selected {
             border-color: var(--primary-pink);
             background: rgba(255, 157, 226, 0.15);
-            box-shadow: 0 0 20px var(--shadow-glow);
+            box-shadow: 0 0 30px var(--shadow-glow), 0 10px 40px rgba(255, 157, 226, 0.2);
+        }
+
+        .flower-emoji-container {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            margin-bottom: var(--spacing-sm);
+            position: relative;
+            transform-style: preserve-3d;
         }
 
         .flower-emoji {
-            font-size: 52px;
+            font-size: 56px;
             display: block;
-            margin-bottom: var(--spacing-sm);
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4))
+                    drop-shadow(0 -4px 8px rgba(255, 255, 255, 0.1));
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-style: preserve-3d;
+            backface-visibility: visible;
+        }
+
+        .flower-emoji::before {
+            content: attr(data-emoji);
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateZ(-20px);
+            opacity: 0.3;
+            filter: blur(4px);
+        }
+
+        .flower-emoji::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotateX(90deg);
+            width: 40px;
+            height: 20px;
+            background: radial-gradient(ellipse, rgba(255, 157, 226, 0.4) 0%, transparent 70%);
+            filter: blur(8px);
         }
 
         .flower-name {
@@ -216,8 +256,8 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-8px) rotateX(10deg); }
         }
 
         /* Utility */
@@ -309,7 +349,9 @@
             
             card.innerHTML = `
                 <span class="checkmark" aria-hidden="true">✅</span>
-                <span class="flower-emoji floating" aria-hidden="true">${flower.emoji}</span>
+                <div class="flower-emoji-container floating">
+                    <span class="flower-emoji" data-emoji="${flower.emoji}">${flower.emoji}</span>
+                </div>
                 <div class="flower-name">${flower.name}</div>
                 <div class="flower-meaning">${flower.meaning}</div>
             `;
